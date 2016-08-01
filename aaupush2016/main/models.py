@@ -3,23 +3,30 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
-class Course(models.Model):
-   name = models.CharField(max_length=100)
-
-   def __str__(self):
-      return self.name
-
 class Department(models.Model):
    name     = models.CharField(max_length=100)
-   code     = models.CharField(max_length=5)
 
    def __str__(self):
       return self.name
+    
+class StudyField(models.Model):
+	name = models.CharField(max_length=100)
+	code = models.CharField(max_length=5)
+	department = models.ForeignKey(Department)
+	
+	def __str__(self):
+		return self.name
+		
+class Course(models.Model):
+	name = models.CharField(max_length=100)
+	studyfield = models.ForeignKey(StudyField)
+
+	def __str__(self):
+		return self.name + "	 - " +  self.studyfield.name
 
 
 class Lecturer(models.Model):
    user = models.ForeignKey(User)
-   email = models.EmailField()
    name = models.CharField(max_length=100)
    course = models.ManyToManyField(Course)
    department = models.ForeignKey(Department)
@@ -32,17 +39,15 @@ class Lecturer(models.Model):
       return self.user.first_name + ' ' + self.user.last_name
 
 class Section(models.Model):
-   name = models.CharField(max_length=100)
    year = models.IntegerField()     
-   number = models.IntegerField()
-   code = models.CharField(max_length=10)
+   section_number = models.IntegerField()
    
+   studyfield = models.ForeignKey(StudyField)
    course = models.ManyToManyField(Course)
-   department = models.ForeignKey(Department)
 
    def __str__(self):
-      return self.name
-
+	return self.studyfield.name + ' ' + 'Year ' + str(self.year) + ' ' + 'Section ' + str(self.section_number)
+      
 class Announcement(models.Model):
    pub_date = models.DateTimeField('Date Published')
    exp_date = models.DateTimeField('Expiry Date')
