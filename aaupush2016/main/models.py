@@ -74,3 +74,7 @@ class Material(models.Model):
 
    def __str__(self):
       return self.name
+      
+class Quote(models.Model):
+	quote = models.CharField(max_length=140)
+	author = models.CharField(max_length = 100)
